@@ -112,12 +112,9 @@ var App = React.createClass({
 
 var objCursor = Cursor.from(obj, ['app']),
     app = App({cursor: objCursor}),
-    document = jsdom('<html><body><div id="app"></div></body></html>'),
-    targetEl = document.querySelectorAll('#app');
+    targetEl = document.getElementById('app');
 
 React.render(app, targetEl);
-
-console.log(html.prettyPrint(serializeDocument(targetEl)));
 
 //app.setState(objCursor);
 //

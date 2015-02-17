@@ -1,8 +1,5 @@
-lib/components/.module-cache/
-cert.pem
-key.pem
-data.db
-data.blob
+lib/
+build/
 
 # Created by https://www.gitignore.io
 

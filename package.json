@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "jsx": "jsx src/ build/",
-    "bundle": "browserify build/browser.js | gzip > lib/browser.js"
+    "bundle": "browserify build/browser.js > lib/browser.js"
   },
   "author": "",
   "license": "ISC",
