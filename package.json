@@ -1,0 +1,21 @@
+{
+  "name": "immutable-js-research",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "jsx": "jsx src/ build/",
+    "bundle": "browserify build/browser.js | gzip > lib/browser.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "immutable": "^3.6.2",
+    "react": "^0.12.2"
+  },
+  "devDependencies": {
+    "browserify": "^8.1.3",
+    "react-tools": "^0.12.2"
+  }
+}
