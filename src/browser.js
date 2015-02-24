@@ -1,4 +1,5 @@
 var Immutable = require('immutable'),
+    RelaxQl = require('../src/relaxql'),
     Cursor = require('immutable/contrib/cursor'),
     React = require('react');
 
@@ -30,36 +31,29 @@ var obj = Immutable.fromJS({
   }
 });
 
-var cursorMixin = {
-  getInitialState: function() {
-    // We create the cursor here as this is the first lifecycle method called on
-    // a component
-    var cursor = this.props.cursorFn
-    // Set the cursor as the state
-    return this.props.cursor;
-  },
-  componentDidMount: function() {
-    console.log('componentDidMount');
-    // Register our 'change' listener
-    // Note: We don't store / use the newly created cursor returned by .from as
-    // we're only interested in the originally passed in cursor.
-    Cursor.from(this.props.cursor, [], this.onCursorChange);
-  },
-  componentWillReceiveProps: function(nextProps) {
-    console.log('componentWillReceiveProps');
-    Cursor.from(this.props.cursor, [], this.onCursorChange);
-    this.replaceState(nextProps.cursor);
-  },
-  onCursorChange: function(newData, oldData, path) {
-    console.log('key path', this.props.cursor._keyPath);
-  }
-};
-
 var Todos = React.createClass({
-  mixins: [cursorMixin],
+
+  mixins: [RelaxQl.mixin()],
+
+  statics: {
+    // The query this component requires
+    query: {
+      // Plural returns an Iterable collection
+      todos: {
+        // The requested structure of data, key esitence is the only important
+        // part of this, the value doesn't matter
+        title: true,
+        done: true
+      }
+    }
+  },
+
+  getInitialState: function() {
+    return {};
+  },
+
   render: function() {
-    console.log('rendering Todos');
-    var items = this.state.deref().map(function(item, index) {
+    var items = this.props.cursor.deref().map(function(item, index) {
       return (
         <li key={index}>
           <input type='checkbox' checked={item.get('done')} />
@@ -77,10 +71,9 @@ var Todos = React.createClass({
 });
 
 var BlogPosts = React.createClass({
-  mixins: [cursorMixin],
+  mixins: [RelaxQl.mixin()],
   render: function() {
-    console.log('rendering BlogPosts');
-    var items = this.state.deref().map(function(item, index) {
+    var items = this.props.cursor.deref().map(function(item, index) {
       return (
         <article key={index}>
           <h1>{item.get('title')}</h1>
@@ -99,25 +92,23 @@ var BlogPosts = React.createClass({
 
 
 var SideBar = React.createClass({
-  mixins: [cursorMixin],
+  mixins: [RelaxQl.mixin()],
   render: function() {
-    console.log('rendering SideBar');
     return (
       <aside className='sidebar'>
-        <Todos cursorFn={this.state.cursor} cursorPath={['todos']} />
+        <Todos {...this.props} key='todos' cursor={this.props.cursor.cursor(['todos'])} relaxQlProps={this.relaxQlProps()} />
       </aside>
     );
   }
 });
 
 var App = React.createClass({
-  mixins: [cursorMixin],
+  mixins: [RelaxQl.mixin()],
   render: function() {
-    console.log('rendering App');
     return (
       <section>
-        <BlogPosts cursorFn={this.state.cursor} cursorPath={['posts']} />
-        <SideBar cursorFn={this.state.cursor} cursorPath={['sidebar']} />
+        <BlogPosts cursor={this.props.cursor.cursor(['posts'])} relaxQlProps={this.relaxQlProps()} key='blogposts' />
+        <SideBar cursor={this.props.cursor.cursor(['sidebar'])} relaxQlProps={this.relaxQlProps()} key='sidebar' />
       </section>
     );
   }
