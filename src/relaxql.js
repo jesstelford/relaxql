@@ -1,6 +1,8 @@
 'use strict';
 var forOwn = require('lodash/object/forOwn'),
-    forEach = require('lodash/collection/forEach');
+    Cursor = require('immutable/contrib/cursor'),
+    forEach = require('lodash/collection/forEach'),
+    Immutable = require('immutable');
 
 var handlers = {};
 
@@ -134,6 +136,17 @@ module.exports = {
       });
     }
 
+    /**
+     * Get a default state with a cursor that points to nothing
+     *
+     * @return Object with a `cursor` key
+     */
+    function getDefaultState() {
+      return {
+        cursor: Cursor.from(Immutable.Map())
+      }
+    }
+
     return {
 
       // This is the first method called in the component lifecycle which has a
@@ -152,14 +165,13 @@ module.exports = {
                          + this.constructor.displayName
                          + ' component'
                         );
-            return {};
+          } else {
+            this.props.relaxQlProps.passQueryToParent(builtQuery, this);
           }
-
-          this.props.relaxQlProps.passQueryToParent(builtQuery, this);
 
         }
 
-        return {};
+        return getDefaultState();
 
       },
 
