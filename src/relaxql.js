@@ -32,7 +32,10 @@ module.exports = {
 
   mixin: function() {
 
-    var builtQuery = {},
+    var builtQuery = {
+          query: {},
+          _children: {}
+        },
         isRoot = false;
 
     // TODO: memoize
@@ -65,39 +68,48 @@ module.exports = {
       return {};
     }
 
-    function getQueryFromChild(childQuery, child) {
+    function receiveQueryFromChild(childQuery, child) {
 
-      var warnings = checkQuery.call(child, childQuery),
-          childKey = getElementKey(child);
+      var childKey;
 
-      if (!childKey) {
-        warnings.push('RelaxQL requires components to have a unique key prop'
-                      + ' to register its query. See "'
-                      + child.constructor.displayName
-                      + '"'
-                     );
-      }
-
-      builtQuery._children = builtQuery._children || {};
-
-      if (builtQuery._children[childKey]) {
-        warnings.push('Attempted to register duplicate query for element with'
-                      + ' key "'
-                      + childKey
-                      + '". See "'
-                      + child.constructor.displayName
-                      + '"'
-                     );
-      }
-
-      if (warnings && warnings.length) {
-        return forEach(warnings, function(warning) {
-          console.warn(warning);
-        });
-
+      try {
+        validateQueryOrThrow.call(child, childQuery);
+        childKey = getChildKeyOrThrow(child);
+        throwIfChildExists(builtQuery, childKey);
+      } catch (error) {
+        return console.warn(error.message);
       }
 
       builtQuery._children[childKey] = childQuery;
+    }
+
+    function getChildKeyOrThrow(child) {
+
+      var childKey = getElementKey(child);
+
+      if (!childKey) {
+        throw new Error('RelaxQL requires components to have a unique key prop'
+                        + ' to register its query. See "'
+                        + child.constructor.displayName
+                        + '"'
+                       );
+      }
+
+      return childKey;
+    }
+
+    function throwIfChildExists(query, childKey) {
+
+      if (query._children[childKey]) {
+        throw new Error('Attempted to register duplicate query for element with'
+                        + ' key "'
+                        + childKey
+                        + '". See "'
+                        + child.constructor.displayName
+                        + '"'
+                       );
+      }
+
     }
 
     /**
@@ -107,20 +119,19 @@ module.exports = {
      *
      * @param query Object The query to check
      */
-    function checkQuery(query) {
-      var warnings = [];
+    function validateQueryOrThrow(query) {
+
       forOwn(query, function(term) {
         forEach(['_children'], function(reservedKeyword) {
           if (term === reservedKeyword) {
-            warnings.push('"'
-                          + reservedKeyword
-                          + '" is a reserved RelaxQL keyword. See "query" for '
-                          + this.constructor.displayName
-                         );
+            throw new Error('"'
+                            + reservedKeyword
+                            + '" is a reserved RelaxQL work. See "query" for '
+                            + this.constructor.displayName
+                           );
           }
         });
       });
-      return warnings;
     }
 
     return {
@@ -170,7 +181,7 @@ module.exports = {
 
       relaxQlProps: function() {
         return {
-          passQueryToParent: getQueryFromChild.bind(this)
+          passQueryToParent: receiveQueryFromChild.bind(this)
         }
       }
 
