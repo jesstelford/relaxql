@@ -96,7 +96,12 @@ var SideBar = React.createClass({
   render: function() {
     return (
       <aside className='sidebar'>
-        <Todos {...this.props} key='todos' cursor={this.props.cursor.cursor(['todos'])} relaxQlProps={this.relaxQlProps()} />
+        <Todos
+          {...this.props}
+          key='todos'
+          cursor={this.props.cursor.cursor(['todos'])}
+          relaxQlProps={this.relaxQlProps()}
+        />
       </aside>
     );
   }
@@ -107,19 +112,39 @@ var App = React.createClass({
   render: function() {
     return (
       <section>
-        <BlogPosts cursor={this.props.cursor.cursor(['posts'])} relaxQlProps={this.relaxQlProps()} key='blogposts' />
-        <SideBar cursor={this.props.cursor.cursor(['sidebar'])} relaxQlProps={this.relaxQlProps()} key='sidebar' />
+        <BlogPosts
+          cursor={this.props.cursor.cursor(['posts'])}
+          relaxQlProps={this.relaxQlProps()}
+          key='blogposts'
+        />
+        <SideBar
+          cursor={this.props.cursor.cursor(['sidebar'])}
+          relaxQlProps={this.relaxQlProps()}
+          key='sidebar'
+        />
       </section>
     );
   }
 });
 
-var objCursor = Cursor.from(obj, ['app'], function() { console.log('changed') }),
+var objCursor = Cursor.from(
+      obj,
+      ['app'],
+      function() {
+        console.log('changed')
+      }
+    ),
     app = App({cursor: objCursor}),
     targetEl = document.getElementById('app'),
     renderedApp = React.render(app, targetEl);
 
-var subCursor = Cursor.from(objCursor._rootData, ['app'], function() { console.log('sub changed') });
+var subCursor = Cursor.from(
+  objCursor._rootData,
+  ['app'],
+  function() {
+    console.log('sub changed')
+  }
+);
 
 var newObjCursor = objCursor.updateIn(['sidebar', 'todos'], function(todos) {
   console.log('updating', todos.toJS());

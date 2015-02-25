@@ -71,13 +71,23 @@ module.exports = {
           childKey = getElementKey(child);
 
       if (!childKey) {
-        warnings.push('RelaxQL requires components to have a unique key prop to register its query. See "' + child.constructor.displayName + '"');
+        warnings.push('RelaxQL requires components to have a unique key prop'
+                      + ' to register its query. See "'
+                      + child.constructor.displayName
+                      + '"'
+                     );
       }
 
       builtQuery._children = builtQuery._children || {};
 
       if (builtQuery._children[childKey]) {
-        warnings.push('Attempted to register duplicate query for element with key "' + childKey + '". See "' + child.constructor.displayName + '"');
+        warnings.push('Attempted to register duplicate query for element with'
+                      + ' key "'
+                      + childKey
+                      + '". See "'
+                      + child.constructor.displayName
+                      + '"'
+                     );
       }
 
       if (warnings && warnings.length) {
@@ -102,7 +112,11 @@ module.exports = {
       forOwn(query, function(term) {
         forEach(['_children'], function(reservedKeyword) {
           if (term === reservedKeyword) {
-            warnings.push('"' + reservedKeyword + '" is a reserved RelaxQL keyword. See "query" for ' + this.constructor.displayName);
+            warnings.push('"'
+                          + reservedKeyword
+                          + '" is a reserved RelaxQL keyword. See "query" for '
+                          + this.constructor.displayName
+                         );
           }
         });
       });
@@ -123,7 +137,10 @@ module.exports = {
         if (!elementIsRoot(this)) {
 
           if (!this.props.relaxQlProps) {
-            console.warn('The component must have relaxQlProps set. See the ' + this.constructor.displayName + ' component');
+            console.warn('The component must have relaxQlProps set. See the '
+                         + this.constructor.displayName
+                         + ' component'
+                        );
             return {};
           }
 
