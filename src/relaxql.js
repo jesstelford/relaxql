@@ -180,6 +180,78 @@ module.exports = {
       }
     }
 
+
+    function triggerQueryLoad(component, query) {
+      console.log('completed query loading:', query);
+
+      var toHandle = {};
+      var result = mapRecursiveQueriesToStructure(toHandle, query);
+
+    }
+
+    /**
+     * Converting the recursive structure into a flat one which allows us to
+     * batch-update all the cursors at once
+     *
+     * @param memo Object The memo of the map. See below for example result
+     * @param query The Recursive query object. Expected to have keys `query`
+     * and `_children`, where `_children` is an array of other queries of the
+     * same form.
+     *
+     * Example result in memo:
+       {
+          // 'blogposts' is the name of a handler
+         'blogposts': [
+           { // The main-column blog posts of the homepage
+             structure: {
+               id: true,
+               title: true,
+               content: true,
+               date: true
+             },
+             // These cursors are duplicated from the cursor the component
+             // receives
+             cursors: [
+               Cusor.from(?)
+             ]
+           },
+           { // The side-column list of links to other posts
+             structure: {
+               id: true,
+               title: true,
+               commentCount: true
+             },
+             cursors: [
+               Cusor.from(?)
+             ]
+           }
+         ]
+       }
+    */
+    function mapRecursiveQueriesToStructure(toHandle, query) {
+
+      if (query.query) {
+        mapQueryToHandle(toHandle, query.query);
+      }
+
+      if (query._children) {
+        forEach(query._children, function(childQuery) {
+          recursivelyMapQueryToHandle(toHandle, childQuery);
+        });
+      }
+
+    }
+
+    function mapQueryToHandle(memo, query) {
+      forOwn(query, function(structure, term) {
+        // TODO: use 'structure' as a key (hashed?) so we don't duplicate query
+        // structures
+        memo[term] = memo[term] || {};
+        // TODO: Complete me.
+        //memo[term].
+      });
+    }
+
     return {
 
       getInitialState: function() {
@@ -216,8 +288,7 @@ module.exports = {
         // This lifecycle method is called from inner most to outer most
         // If this is the root element, then we know
         if (elementIsRoot(this)) {
-          // TODO Trigger query
-          console.log('completed query built:', builtQuery);
+          triggerQueryLoad(this, buildQuery);
         }
       },
 
