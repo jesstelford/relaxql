@@ -13,7 +13,7 @@
   "dependencies": {
     "immutable": "^3.6.2",
     "mori": "^0.3.2",
-    "react": "^0.12.2"
+    "react": "^0.13.0-rc1"
   },
   "devDependencies": {
     "browserify": "^8.1.3",

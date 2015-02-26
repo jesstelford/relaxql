@@ -45,8 +45,29 @@ module.exports = {
       return query;
     }
 
+    /**
+     * Supports v0.12.x & v0.13.x, otherwise warns and returns false
+     *
+     * @return Boolean True if it is a root element
+     */
     function elementIsRoot(context) {
-      return context._mountDepth === 0;
+      return elementIsRootv12(context)
+        || elementIsRootv13(context);
+    }
+
+    function elementIsRootv12(context) {
+      return (
+        typeof context._mountDepth !== 'undefined'
+        && context._mountDepth === 0
+      );
+    }
+
+    function elementIsRootv13(context) {
+      return (
+        typeof context._reactInternalInstance !== 'undefined'
+        && typeof context._reactInternalInstance._isTopLevel !== 'undefined'
+        && context._reactInternalInstance._isTopLevel
+      );
     }
 
     function elementHasQuery(context) {
@@ -63,7 +84,19 @@ module.exports = {
     }
 
     function getElementKey(context) {
+      try {
+        return getElementKeyv12(context)
+      } catch (error) {
+        return getElementKeyv13(context);
+      }
+    }
+
+    function getElementKeyv12(context) {
       return context._currentElement.key;
+    }
+
+    function getElementKeyv13(context) {
+      return context._reactInternalInstance._currentElement.key;
     }
 
     function getDefaultQuery(context) {
@@ -149,9 +182,15 @@ module.exports = {
 
     return {
 
-      // This is the first method called in the component lifecycle which has a
-      // context for the component (either instantiated or as a constructor)
       getInitialState: function() {
+        return getDefaultState();
+      },
+
+      // This is the first method called in the component lifecycle which has a
+      // context for the component (either instantiated or as a constructor) in
+      // both v0.12.x and v0.13.x (v0.12.x has context in getInitialState, but
+      // v0.13.x does not)
+      componentWillMount: function() {
         var query = getElementQuery(this),
             queryRequestStructure,
             warnings;
@@ -171,11 +210,6 @@ module.exports = {
 
         }
 
-        return getDefaultState();
-
-      },
-
-      componentWillMount: function() {
       },
 
       componentDidMount: function() {

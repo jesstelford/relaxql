@@ -134,7 +134,8 @@ var objCursor = Cursor.from(
         console.log('changed')
       }
     ),
-    app = App({cursor: objCursor}),
+    AppFactory = React.createFactory(App);
+    app = AppFactory({cursor: objCursor}),
     targetEl = document.getElementById('app'),
     renderedApp = React.render(app, targetEl);
 
