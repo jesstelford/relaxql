@@ -212,7 +212,10 @@ module.exports = {
              // These cursors are duplicated from the cursor the component
              // receives
              cursors: [
-               Cusor.from(?)
+               {
+                 form: 'plural',
+                 cursor: Cusor.from(?)
+               }
              ]
            },
            { // The side-column list of links to other posts
@@ -222,7 +225,10 @@ module.exports = {
                commentCount: true
              },
              cursors: [
-               Cusor.from(?)
+               {
+                 form: 'singular',
+                 cursor: Cusor.from(?)
+               }
              ]
            }
          ]
@@ -246,10 +252,43 @@ module.exports = {
       forOwn(query, function(structure, term) {
         // TODO: use 'structure' as a key (hashed?) so we don't duplicate query
         // structures
-        memo[term] = memo[term] || {};
+        var singularTerm = getSingular(term);
+        var pluralTerm = isPlural(term);
+        var termQueryGroups = memo[singularTerm] = memo[singularTerm] || {};
+        getTermQueryGroup(singularTerm, pluralTerm, query, termQueryGroups);
         // TODO: Complete me.
         //memo[term].
       });
+    }
+
+    function getTermQueryGroup(term, isPlural, query, groups) {
+
+      var foundGroup;
+
+      var groupFound = groups.some(function(group) {
+
+        if (deepEqual(group.structure, term.query)) {
+          foundGroup = group;
+          return true;
+        } else {
+        }
+
+      });
+
+      if (!groupFound) {
+        groups.push({
+          structure: term
+          // TODO:
+          cursors: [
+            // TODO: What do I put in here!?
+          ]
+        });
+      }
+    }
+
+    function deepEqual(a, b) {
+      // TODO: implement me
+      return true;
     }
 
     return {

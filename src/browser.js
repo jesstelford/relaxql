@@ -140,8 +140,8 @@ var objCursor = Cursor.from(
     renderedApp = React.render(app, targetEl);
 
 var subCursor = Cursor.from(
-  objCursor._rootData,
-  ['app'],
+  objCursor,
+  ['sidebar', 'todos'],
   function() {
     console.log('sub changed')
   }
@@ -155,7 +155,16 @@ var newObjCursor = objCursor.updateIn(['sidebar', 'todos'], function(todos) {
   }));
 });
 
+var newSubCursor = subCursor.update(function(todos) {
+  return todos.push(Immutable.fromJS({
+    title: 'update sub cursor',
+    done: false
+  }));
+});
+
+
 console.log(obj.toJS());
+console.log(newObjCursor);
 console.log(newObjCursor.toJS());
 //renderedApp.setProps(objCursor);
 //
