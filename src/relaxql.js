@@ -21,14 +21,14 @@ function getSingular(term) {
 module.exports = {
 
   /**
-   * Add a store for a particular query term
+   * Register a store for a particular query term
    *
    * @param term String The term to handle. If ends in 's', is considered to be
    * a 'plural'. For example, 'todos' will be registered as 'todo', and 'sheeps'
    * will be registered as 'sheep'.
    * @param store function
    */
-  addStore: function(term, store) {
+  registerStore: function(term, store) {
     stores[getSingular(term)] = store;
   },
 
