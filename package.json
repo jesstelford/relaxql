@@ -1,18 +1,26 @@
 {
-  "name": "immutable-js-research",
-  "version": "1.0.0",
-  "description": "",
+  "name": "relaxql",
+  "version": "0.0.1",
+  "description": "Relay + Flux + GraphQL = RelaxQL: A non-leaky nested component query library",
+  "keywords": [
+    "react",
+    "query language",
+    "relay",
+    "flux",
+    "graphql",
+    "component",
+    "store"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "jsx": "jsx src/ build/",
     "bundle": "browserify build/browser.js > lib/browser.js"
   },
-  "author": "",
+  "author": "Jess Telford <hi+relaxql@jes.st> (http://jes.st)",
   "license": "ISC",
   "dependencies": {
     "immutable": "^3.6.2",
-    "mori": "^0.3.2",
     "react": "^0.13.0-rc1"
   },
   "devDependencies": {
