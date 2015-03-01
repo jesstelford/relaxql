@@ -4,7 +4,7 @@ var forOwn = require('lodash/object/forOwn'),
     forEach = require('lodash/collection/forEach'),
     Immutable = require('immutable');
 
-var handlers = {};
+var stores = {};
 
 function isPlural(term) {
   return term.slice(-1) === 's';
@@ -21,15 +21,15 @@ function getSingular(term) {
 module.exports = {
 
   /**
-   * Add a handler for a particular query term
+   * Add a store for a particular query term
    *
    * @param term String The term to handle. If ends in 's', is considered to be
    * a 'plural'. For example, 'todos' will be registered as 'todo', and 'sheeps'
    * will be registered as 'sheep'.
-   * @param handler function
+   * @param store function
    */
-  addTermHandler: function(term, handler) {
-    handlers[getSingular(term)] = handler;
+  addStore: function(term, store) {
+    stores[getSingular(term)] = store;
   },
 
   mixin: function() {
@@ -200,7 +200,7 @@ module.exports = {
      *
      * Example result in memo:
        {
-          // 'blogposts' is the name of a handler
+          // 'blogposts' is the name of a store
          'blogposts': [
            { // The main-column blog posts of the homepage
              structure: {
